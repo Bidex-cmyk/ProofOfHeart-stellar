@@ -194,6 +194,8 @@ pub enum CampaignKey {
     ///
     /// Kept last so existing on-chain enum discriminants remain unchanged.
     EmergencyWithdrawal(u32),
+    /// Payout marker for a campaign, keyed by campaign ID.
+    CampaignPayoutMarker(u32),
 }
 
 /// An admin's record of removing an off-chain comment (#797).
@@ -773,6 +775,18 @@ pub fn extend_voting_state_ttl(env: &Env, campaign_id: u32) {
             storage.extend_ttl(&key, BUMP_THRESHOLD, BUMP_AMOUNT);
         }
     }
+}
+
+pub fn bump_campaign(env: &Env, campaign_id: u32) {
+    let key = CampaignKey::Campaign(campaign_id);
+    let storage = env.storage().persistent();
+    if storage.has(&key) {
+        storage.extend_ttl(&key, BUMP_THRESHOLD, BUMP_AMOUNT);
+    }
+}
+
+pub fn bump_votes(env: &Env, campaign_id: u32) {
+    extend_voting_state_ttl(env, campaign_id);
 }
 
 /// Returns the minimum vote quorum setting, falling back to `default` if unset.
@@ -1583,7 +1597,9 @@ pub fn hash_text(env: &Env, text: &String) -> BytesN<32> {
     let len = (text.len() as usize).min(MAX_HASHED_TEXT_LEN);
     let mut buf = [0u8; MAX_HASHED_TEXT_LEN];
     text.copy_into_slice(&mut buf[..len]);
-    env.crypto().sha256(&Bytes::from_slice(env, &buf[..len]))
+    env.crypto()
+        .sha256(&Bytes::from_slice(env, &buf[..len]))
+        .into()
 }
 
 // ── Per-creator title index (#801) ──────────────────────────────────────────

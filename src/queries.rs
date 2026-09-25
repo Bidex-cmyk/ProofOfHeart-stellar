@@ -106,7 +106,7 @@ pub(crate) fn list_active_campaigns(
                 }
             }
         }
-        
+
         if current_id == u32::MAX {
             break;
         }
@@ -227,15 +227,16 @@ mod bucket_pagination_tests {
         let calls = Cell::new(0u32);
         // Every bucket, regardless of index, reports only 2 entries — far
         // fewer than `bucket_size` and fewer than `start`'s offset into it.
-        let result = get_campaigns_from_buckets(&env, start, limit, total, bucket_size, |e, _idx| {
-            let n = calls.get() + 1;
-            calls.set(n);
-            assert!(
-                n <= 32,
-                "get_bucket called {n} times — position is not advancing (infinite loop)"
-            );
-            soroban_sdk::Vec::from_array(e, [1u32, 2u32])
-        });
+        let result =
+            get_campaigns_from_buckets(&env, start, limit, total, bucket_size, |e, _idx| {
+                let n = calls.get() + 1;
+                calls.set(n);
+                assert!(
+                    n <= 32,
+                    "get_bucket called {n} times — position is not advancing (infinite loop)"
+                );
+                soroban_sdk::Vec::from_array(e, [1u32, 2u32])
+            });
 
         // No real campaigns exist for ids 1/2 in this bare `Env`, so nothing
         // is collected — the point of the test is termination, not content.
@@ -256,7 +257,10 @@ mod bucket_pagination_tests {
         let result = get_campaigns_from_buckets(&env, 0, 50, total, bucket_size, |e, _idx| {
             let n = calls.get() + 1;
             calls.set(n);
-            assert!(n <= 32, "get_bucket called {n} times — possible infinite loop");
+            assert!(
+                n <= 32,
+                "get_bucket called {n} times — possible infinite loop"
+            );
             soroban_sdk::Vec::new(e)
         });
 
@@ -386,6 +390,7 @@ pub(crate) fn get_creator_stats(env: &Env, creator: Address) -> CreatorStats {
     }
 
     CreatorStats {
+        is_known_creator: total > 0,
         total_campaigns: total,
         active_campaigns,
         total_raised,

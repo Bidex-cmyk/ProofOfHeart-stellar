@@ -406,7 +406,6 @@ fn test_token_swap_blocked_after_partial_refund() {
     let res2 = client.try_accept_token_update(&admin);
     assert!(res2.is_ok());
     assert_eq!(client.get_token(), new_token_address);
-
 }
 
 // ── initialisation & config ─────────────────────────────────────────────────────

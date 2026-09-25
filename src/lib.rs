@@ -55,8 +55,8 @@ mod types;
 mod voting;
 
 pub(crate) use constants::{
-    BPS_CEIL_OFFSET, BPS_DENOMINATOR, MAX_EXTENSION_DAYS, MAX_TOKEN_UPDATE_DELAY_SECS,
-    SECONDS_PER_DAY, TOKEN_UPDATE_DELAY_SECS, TRANSFER_EXPIRY_SECS,
+    BPS_CEIL_OFFSET, BPS_DENOMINATOR, EMERGENCY_WITHDRAWAL_TIMELOCK_SECS, MAX_EXTENSION_DAYS,
+    MAX_TOKEN_UPDATE_DELAY_SECS, SECONDS_PER_DAY, TOKEN_UPDATE_DELAY_SECS, TRANSFER_EXPIRY_SECS,
 };
 pub use errors::Error;
 use soroban_sdk::{contract, contractimpl, Address, BytesN, Env, String};
@@ -850,7 +850,7 @@ impl ProofOfHeart {
         contributor: Address,
         start: u32,
         limit: u32,
-    ) -> soroban_sdk::Vec<(u32, i128, String, bool)> {
+    ) -> (soroban_sdk::Vec<(u32, i128, String, bool)>, u32) {
         queries::get_contributor_portfolio(&env, contributor, start, limit)
     }
 

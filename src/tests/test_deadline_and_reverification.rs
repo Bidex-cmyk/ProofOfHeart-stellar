@@ -220,10 +220,8 @@ fn test_bait_and_switch_is_prevented_by_freeze() {
     client.verify_campaign(&id);
 
     // Creator cannot rewrite the description after verification.
-    let res = client.try_update_campaign_description(
-        &id,
-        &String::from_str(&env, "Bait and switch"),
-    );
+    let res =
+        client.try_update_campaign_description(&id, &String::from_str(&env, "Bait and switch"));
     assert_eq!(res.unwrap_err().unwrap(), Error::CampaignAlreadyVerified);
     assert!(client.get_campaign(&id).is_verified);
 }
