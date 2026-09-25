@@ -31,15 +31,7 @@ fn make_campaign(
 fn test_set_personal_cap_below_lifetime_contribution_rejected() {
     let (env, _admin, creator, contributor, _, _token, token_admin, client) = setup_env();
 
-    let campaign_id = make_campaign(
-        &env,
-        &client,
-        &creator,
-        10_000,
-        30,
-        Category::Learner,
-        0,
-    );
+    let campaign_id = make_campaign(&env, &client, &creator, 10_000, 30, Category::Learner, 0);
 
     token_admin.mint(&contributor, &10_000);
     client.verify_campaign(&campaign_id);
@@ -70,7 +62,10 @@ fn test_set_personal_cap_below_lifetime_contribution_rejected() {
 
     // Further contribution is blocked since personal cap (1000) == lifetime (1000)
     let res_contrib = client.try_contribute(&campaign_id, &contributor, &1);
-    assert_eq!(res_contrib.unwrap_err().unwrap(), Error::ContributionCapExceeded);
+    assert_eq!(
+        res_contrib.unwrap_err().unwrap(),
+        Error::ContributionCapExceeded
+    );
 
     // Increasing personal cap above lifetime contribution is allowed
     let res_increase = client.try_set_personal_cap(&campaign_id, &contributor, &2_500);
@@ -85,7 +80,10 @@ fn test_set_personal_cap_below_lifetime_contribution_rejected() {
 
     // Now setting personal cap below new lifetime contribution (1500) fails
     let res_below_new_lifetime = client.try_set_personal_cap(&campaign_id, &contributor, &1_499);
-    assert_eq!(res_below_new_lifetime.unwrap_err().unwrap(), Error::ValidationFailed);
+    assert_eq!(
+        res_below_new_lifetime.unwrap_err().unwrap(),
+        Error::ValidationFailed
+    );
 
     // Setting personal cap to exactly new lifetime contribution (1500) succeeds
     let res_exact_new = client.try_set_personal_cap(&campaign_id, &contributor, &1_500);
@@ -118,7 +116,10 @@ fn test_set_personal_cap_before_any_contributions() {
 
     // Setting cap above campaign max_contribution_per_user fails
     let res_above_campaign_max = client.try_set_personal_cap(&campaign_id, &contributor, &5_001);
-    assert_eq!(res_above_campaign_max.unwrap_err().unwrap(), Error::ValidationFailed);
+    assert_eq!(
+        res_above_campaign_max.unwrap_err().unwrap(),
+        Error::ValidationFailed
+    );
 
     // Setting valid cap succeeds
     let res_valid = client.try_set_personal_cap(&campaign_id, &contributor, &2_000);

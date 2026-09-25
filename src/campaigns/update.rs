@@ -5,10 +5,7 @@ use crate::lifecycle::{
     campaign_start_time_or_error, get_creator_campaign, require_active_campaign,
     require_not_paused, require_unverified_campaign,
 };
-use crate::storage::{
-    bump_instance_ttl, get_category_duration_cap,
-    set_campaign,
-};
+use crate::storage::{bump_instance_ttl, get_category_duration_cap, set_campaign};
 
 /// Updates the title and description of a campaign.
 ///

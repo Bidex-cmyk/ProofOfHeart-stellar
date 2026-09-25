@@ -527,7 +527,13 @@ fn list_campaigns_boundary_cases() {
 fn list_active_campaigns_boundary_cases_and_sparse_results() {
     let (env, _admin, creator, _, _, _, _, client) = setup_env();
 
-    let titles = ["Campaign 1", "Campaign 2", "Campaign 3", "Campaign 4", "Campaign 5"];
+    let titles = [
+        "Campaign 1",
+        "Campaign 2",
+        "Campaign 3",
+        "Campaign 4",
+        "Campaign 5",
+    ];
     for idx in 0..5 {
         let title_str = format!("Campaign {}", idx);
         let _ = client.create_campaign(&make_params(
@@ -731,7 +737,13 @@ fn test_get_contributor_portfolio_cursor_pagination() {
     let (env, _admin, creator, contributor1, _, _token, token_admin, client) = setup_env();
     token_admin.mint(&contributor1, &100_000);
 
-    for title in ["Portfolio A", "Portfolio B", "Portfolio C", "Portfolio D", "Portfolio E"] {
+    for title in [
+        "Portfolio A",
+        "Portfolio B",
+        "Portfolio C",
+        "Portfolio D",
+        "Portfolio E",
+    ] {
         let id = client.create_campaign(&make_params(
             creator.clone(),
             String::from_str(&env, title),
@@ -831,11 +843,13 @@ fn test_get_contributor_portfolio_caps_page_at_list_max_limit() {
     let (first, cursor) = client.get_contributor_portfolio(&contributor1, &0, &u32::MAX);
     assert_eq!(first.len(), crate::LIST_MAX_LIMIT);
     assert_eq!(first.get(0).unwrap().0, 1);
-    assert_eq!(first.get(crate::LIST_MAX_LIMIT - 1).unwrap().0, crate::LIST_MAX_LIMIT);
+    assert_eq!(
+        first.get(crate::LIST_MAX_LIMIT - 1).unwrap().0,
+        crate::LIST_MAX_LIMIT
+    );
     assert_eq!(cursor, crate::LIST_MAX_LIMIT + 1);
 
-    let (second, tail_cursor) =
-        client.get_contributor_portfolio(&contributor1, &cursor, &u32::MAX);
+    let (second, tail_cursor) = client.get_contributor_portfolio(&contributor1, &cursor, &u32::MAX);
     assert_eq!(second.len(), 9);
     assert_eq!(second.get(0).unwrap().0, crate::LIST_MAX_LIMIT + 2);
     assert_eq!(second.get(8).unwrap().0, total);
@@ -864,8 +878,7 @@ fn test_get_contributor_portfolio_scan_window_exhaustion() {
     assert_eq!(cursor, crate::constants::MAX_SCAN_WINDOW + 1);
 
     // The next call resumes from the returned cursor and finishes the scan.
-    let (tail, tail_cursor) =
-        client.get_contributor_portfolio(&contributor1, &cursor, &50);
+    let (tail, tail_cursor) = client.get_contributor_portfolio(&contributor1, &cursor, &50);
     assert_eq!(tail.len(), 0);
     assert_eq!(tail_cursor, 0);
 }

@@ -8,7 +8,12 @@ use super::helpers::*;
 use crate::{storage, Category, Error, MaybePendingCreator};
 use soroban_sdk::{testutils::Ledger, Address, BytesN, String, TryFromVal};
 
-fn make_campaign(env: &soroban_sdk::Env, creator: &Address, client: &ProofOfHeartClient) -> u32 {
+fn make_campaign(
+    env: &soroban_sdk::Env,
+    creator: &Address,
+    client: &ProofOfHeartClient,
+    _seq: u32,
+) -> u32 {
     let count = client.get_campaign_count();
     let title_str = format!("Campaign Title {}", count + 1);
     client.create_campaign(&make_params(

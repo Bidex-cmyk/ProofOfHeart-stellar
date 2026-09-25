@@ -12,7 +12,7 @@ pub(crate) const BPS_DENOMINATOR: u32 = 10_000;
 ///
 /// Consumed in `campaigns/withdraw.rs` for the platform-fee and reserve
 /// ceiling-division computations.
-pub(crate) const BPS_CELI_OFFSET: i128 = BPS_DENOMINATOR as i128 - 1;
+pub(crate) const BPS_CEIL_OFFSET: i128 = BPS_DENOMINATOR as i128 - 1;
 
 /// Number of seconds in one day.
 pub(crate) const SECONDS_PER_DAY: u64 = 86_400;
@@ -23,7 +23,7 @@ pub(crate) const SECONDS_PER_DAY: u64 = 86_400;
 /// must extend the campaign/voting storage TTL before those writes to avoid a
 /// near-expiry campaign failing mid-finalization. This is the minimum buffer
 /// we add on top of the existing TTL.
-pub(crate) const VERIFICATION_TTD_BUMP_SECS : u64 = SECONDS_PER_DAY;
+pub(crate) const VERIFICATION_TTD_BUMP_SECS: u64 = SECONDS_PER_DAY;
 
 /// Default delay before a proposed token update can be accepted (7 days).
 ///
@@ -49,7 +49,7 @@ pub(crate) const EMERGENCY_WITHDRAWAL_TIMELOCK_SECS: u64 = 7 * SECONDS_PER_DAY;
 /// Upper bound accepted by `set_token_update_delay_secs` (365 days), so the
 /// admin-configurable range stays sane while still covering any realistic
 /// timelock policy (#650).
-pub(crate) const MAX_TOKEN_UPDATE_DELAY_SECS : u64 = 365 * SECONDS_PER_DAY;
+pub(crate) const MAX_TOKEN_UPDATE_DELAY_SECS: u64 = 365 * SECONDS_PER_DAY;
 
 /// Maximum days a single `extend_campaign_deadline` call may add (#788).
 ///

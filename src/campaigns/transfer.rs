@@ -254,7 +254,11 @@ pub(crate) fn cancel_campaign_transfer(env: &Env, campaign_id: u32) -> Result<()
     set_campaign(env, campaign_id, &campaign);
 
     env.events().publish(
-        ("campaign_transfer_cancelled", campaign_id, campaign.creator.clone()),
+        (
+            "campaign_transfer_cancelled",
+            campaign_id,
+            campaign.creator.clone(),
+        ),
         pending_address,
     );
 

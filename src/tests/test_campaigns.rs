@@ -1838,4 +1838,3 @@ fn test_initiate_transfer_auth_gate_runs_before_state_write() {
     assert_eq!(res.unwrap_err().unwrap(), Error::InvalidNewOwner);
     assert!(!client.has_pending_campaign_transfer(&campaign_id));
 }
-
