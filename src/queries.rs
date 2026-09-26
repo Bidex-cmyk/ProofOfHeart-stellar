@@ -209,7 +209,7 @@ where
 mod bucket_pagination_tests {
     use super::get_campaigns_from_buckets;
     use core::cell::Cell;
-    use soroban_sdk::Env;
+    use soroban_sdk::{testutils::Address as _, Address, Env};
 
     /// Guards against #844: a bucket that reports fewer entries than the
     /// current position implies (malformed/inconsistent bucket metadata)
@@ -219,6 +219,8 @@ mod bucket_pagination_tests {
     #[test]
     fn malformed_short_bucket_does_not_loop_forever() {
         let env = Env::default();
+        env.mock_all_auths();
+        let contract_id = env.register_contract(None, crate::ProofOfHeart);
         let bucket_size = 10u32;
         let total = 25u32;
         let start = 5u32; // mid-bucket: idx_in_bucket = 5
@@ -227,7 +229,7 @@ mod bucket_pagination_tests {
         let calls = Cell::new(0u32);
         // Every bucket, regardless of index, reports only 2 entries — far
         // fewer than `bucket_size` and fewer than `start`'s offset into it.
-        let result =
+        let result = env.as_contract(&contract_id, || {
             get_campaigns_from_buckets(&env, start, limit, total, bucket_size, |e, _idx| {
                 let n = calls.get() + 1;
                 calls.set(n);
@@ -236,7 +238,8 @@ mod bucket_pagination_tests {
                     "get_bucket called {n} times — position is not advancing (infinite loop)"
                 );
                 soroban_sdk::Vec::from_array(e, [1u32, 2u32])
-            });
+            })
+        });
 
         // No real campaigns exist for ids 1/2 in this bare `Env`, so nothing
         // is collected — the point of the test is termination, not content.
@@ -250,18 +253,22 @@ mod bucket_pagination_tests {
     #[test]
     fn always_empty_bucket_terminates() {
         let env = Env::default();
+        env.mock_all_auths();
+        let contract_id = env.register_contract(None, crate::ProofOfHeart);
         let bucket_size = 10u32;
         let total = 100u32;
         let calls = Cell::new(0u32);
 
-        let result = get_campaigns_from_buckets(&env, 0, 50, total, bucket_size, |e, _idx| {
-            let n = calls.get() + 1;
-            calls.set(n);
-            assert!(
-                n <= 32,
-                "get_bucket called {n} times — possible infinite loop"
-            );
-            soroban_sdk::Vec::new(e)
+        let result = env.as_contract(&contract_id, || {
+            get_campaigns_from_buckets(&env, 0, 50, total, bucket_size, |e, _idx| {
+                let n = calls.get() + 1;
+                calls.set(n);
+                assert!(
+                    n <= 32,
+                    "get_bucket called {n} times — possible infinite loop"
+                );
+                soroban_sdk::Vec::new(e)
+            })
         });
 
         assert_eq!(result.0.len(), 0);

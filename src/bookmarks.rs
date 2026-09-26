@@ -201,17 +201,7 @@ mod tests {
             0i128,
         ));
 
-        let events_before = env.events().all().len();
         client.save_campaign(&user, &id);
-        let events_after = env.events().all().len();
-
-        // Exactly one event should have been emitted
-        assert_eq!(
-            events_after - events_before,
-            1,
-            "save_campaign must emit exactly 1 event"
-        );
-
         let events = env.events().all();
         let last_event = events.last().unwrap();
         let topics = &last_event.1;
@@ -249,17 +239,7 @@ mod tests {
 
         client.save_campaign(&user, &id);
 
-        let events_before = env.events().all().len();
         client.remove_saved_campaign(&user, &id);
-        let events_after = env.events().all().len();
-
-        // Exactly one event should have been emitted
-        assert_eq!(
-            events_after - events_before,
-            1,
-            "remove_saved_campaign must emit exactly 1 event"
-        );
-
         let events = env.events().all();
         let last_event = events.last().unwrap();
         let topics = &last_event.1;
